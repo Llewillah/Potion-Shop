@@ -1,16 +1,12 @@
 using UnityEngine;
 
-public class Ingredient : MonoBehaviour
+public class Ingredient : MonoBehaviour, IClickable
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    public IngrediantScriptable ingreScrip;
 
-    // Update is called once per frame
-    void Update()
+    public void OnClick() 
     {
-        
+    
+    
     }
 }
