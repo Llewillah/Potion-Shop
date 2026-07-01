@@ -4,21 +4,24 @@ using UnityEngine.InputSystem;
 public interface IClickable 
 { 
     public void OnClick();
+
+    public void CancelClick();
 }
 public class MouseHandler : MonoBehaviour
 {
     InputAction leftClick;
+    IClickable curSelec;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         leftClick = InputSystem.actions.FindAction("Attack");
         leftClick.performed += ctx => DoLeftClick();
+        leftClick.canceled += ctx => DoLeftClickUp();
     }
 
     // Update is called once per frame
     void Update()
     {
-        
     }
 
     public void DoLeftClick() 
@@ -29,6 +32,7 @@ public class MouseHandler : MonoBehaviour
         if (obj != null) 
         { 
             obj.OnClick();
+            curSelec = obj;
         }
     }
     IClickable CheckHit(RaycastHit2D hit)
@@ -39,5 +43,10 @@ public class MouseHandler : MonoBehaviour
         }
 
         return null;
+    }
+
+    public void DoLeftClickUp() 
+    {
+        curSelec.CancelClick();
     }
 }

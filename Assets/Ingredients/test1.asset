@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8800c34edbcc034189d2090e63bd903, type: 3}
   m_Name: test1
   m_EditorClassIdentifier: Assembly-CSharp::IngrediantScriptable
-  iName: 
-  sprite: {fileID: 0}
+  iName: test1
+  sprite: {fileID: 7482667652216324306, guid: 2c18a875aa3469b4a811e20716a0ba85, type: 3}
   index: 0
   description: 
   val: 0
