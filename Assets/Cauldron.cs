@@ -11,11 +11,6 @@ public class Cauldron : MonoBehaviour
     List<int> curMix = new List<int>();
 
 
-    
-    void Start()
-    {
-    }
-
     // Update is called once per frame
     void Update()
     {
@@ -27,19 +22,27 @@ public class Cauldron : MonoBehaviour
 
     public void AddToMix(int index) 
     {
-        curMix.Add(index);
-        Debug.Log(curMix);
+        if (!cooking)
+        {
+            curMix.Add(index);
+            Debug.Log(curMix);
+        }
     }
 
-    public void StartCook() 
+    public void ToggleFlame() 
     {
-        timer = 0;
-        cooking = true;
+        cooking ^= true;
     }
+
+    void ResetCooking() 
+    {
+        cooking = false;
+        timer = 0;
+        curMix.Clear();
+    } 
 
     public void FinishCook() 
     {
-        cooking = false;
 
         if (timer < cookTime)
         {
@@ -53,5 +56,7 @@ public class Cauldron : MonoBehaviour
         {
             //Great!
         }
+
+        ResetCooking();
     }
 }
