@@ -4,14 +4,11 @@ using UnityEngine.InputSystem;
 
 public class Ingredient : MonoBehaviour, IClickable
 {
-    public IngrediantScriptable ingreScrip;
-    Rigidbody2D rb;
+    IngrediantScriptable ingreScrip;
     TargetJoint2D joint;
 
     private void Start()
     {
-        GetComponent<SpriteRenderer>().sprite = ingreScrip.sprite;
-        rb = GetComponent<Rigidbody2D>();
         joint = GetComponent<TargetJoint2D>();
         joint.enabled = false;
     }
@@ -39,7 +36,14 @@ public class Ingredient : MonoBehaviour, IClickable
         if (collision.gameObject.TryGetComponent<Cauldron>(out Cauldron c))
         {
             c.AddToMix(ingreScrip.index);
-            Destroy(gameObject);
+            gameObject.SetActive(false);
         }
+    }
+
+    public void SetIngredient(IngrediantScriptable scrip) 
+    {
+        ingreScrip = scrip;
+        GetComponent<SpriteRenderer>().sprite = ingreScrip.sprite;
+        gameObject.SetActive(true);
     }
 }

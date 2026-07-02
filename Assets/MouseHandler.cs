@@ -47,6 +47,10 @@ public class MouseHandler : MonoBehaviour
 
     public void DoLeftClickUp() 
     {
-        curSelec.CancelClick();
+        if (curSelec != null)
+        {
+            curSelec.CancelClick();
+            curSelec = null;
+        }
     }
 }
