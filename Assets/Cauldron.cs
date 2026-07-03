@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Cauldron : MonoBehaviour, IClickable
@@ -48,12 +47,14 @@ public class Cauldron : MonoBehaviour, IClickable
         }
     }
 
-    public void AddToMix(int index) 
+    public bool AddToMix(int index) 
     {
-        if (!cooking)
+        if (!cooking && timer <= 0)
         {
-            curMix.Add(index);            
+            curMix.Add(index);
+            return true;
         }
+        return false;
     }
 
     public void ToggleFlame() 

@@ -7,6 +7,7 @@ public class PotionOutput : MonoBehaviour, IClickable
     List<int> mix;
     int quality;
     TargetJoint2D joint;
+    bool reset = false;
     private void Start()
     {
         OutputManager.instance.AddUnused(this);
@@ -22,8 +23,8 @@ public class PotionOutput : MonoBehaviour, IClickable
         }
     }
 
-    public void SetMix(List<int> mix, int quality) 
-    { 
+    public void SetMix(List<int> mix, int quality)
+    {
         this.mix = mix;
         this.quality = quality;
     }
@@ -37,5 +38,43 @@ public class PotionOutput : MonoBehaviour, IClickable
     public void CancelClick()
     {
         joint.enabled = false;
+        if (reset)
+        {
+            ResetOutput();
+        }
+    }
+
+    void ResetOutput()
+    {
+        reset = false;
+        OutputManager.instance.AddUnused(this);
+        gameObject.SetActive(false);
+    }
+
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (!joint.enabled)
+        {
+            if (collision.gameObject.CompareTag("Bin"))
+            {
+                ResetOutput();
+            }
+            else if (collision.gameObject.CompareTag("Deposit"))
+            {
+                ResetOutput();
+            }
+        }
+        else
+        {
+            if (collision.gameObject.CompareTag("Bin"))
+            {
+                reset = true;
+            }
+            else if (collision.gameObject.CompareTag("Deposit"))
+            { 
+                reset = true;
+            }
+        }
     }
 }

@@ -1,4 +1,3 @@
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -6,6 +5,7 @@ public class Ingredient : MonoBehaviour, IClickable
 {
     IngrediantScriptable ingreScrip;
     TargetJoint2D joint;
+    BookScript bs;
 
     private void Start()
     {
@@ -35,8 +35,11 @@ public class Ingredient : MonoBehaviour, IClickable
     {
         if (collision.gameObject.TryGetComponent<Cauldron>(out Cauldron c))
         {
-            c.AddToMix(ingreScrip.index);
-            gameObject.SetActive(false);
+            if (c.AddToMix(ingreScrip.index))
+            {
+                gameObject.SetActive(false);
+                bs.ResetIngredient(this);
+            }
         }
     }
 
@@ -45,5 +48,10 @@ public class Ingredient : MonoBehaviour, IClickable
         ingreScrip = scrip;
         GetComponent<SpriteRenderer>().sprite = ingreScrip.sprite;
         gameObject.SetActive(true);
+    }
+
+    public void SetBs(BookScript b) 
+    {
+        bs = b;
     }
 }
