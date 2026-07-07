@@ -1,20 +1,23 @@
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections.Generic;
 
-public class PotionOutput : MonoBehaviour, IClickable
+public class InventoryObject : MonoBehaviour, IClickable
 {
     List<int> mix;
     int quality;
+
     TargetJoint2D joint;
-    bool deposit = false, bin = false;
+    bool reset = false;
+
+    Vector2 invPos;
+
     private void Start()
     {
-        OutputManager.instance.AddUnused(this);
         joint = GetComponent<TargetJoint2D>();
         joint.enabled = false;
+        InventoryManager.instance.AddUnused(this);
     }
-
     private void Update()
     {
         if (joint.enabled)
@@ -23,12 +26,12 @@ public class PotionOutput : MonoBehaviour, IClickable
         }
     }
 
-    public void SetMix(List<int> mix, int quality)
+    public void SetInvObj(List<int> mix, int quality, Vector2 pos) 
     {
         this.mix = mix;
         this.quality = quality;
+        invPos = pos;
     }
-
     public void OnClick()
     {
         joint.enabled = true;
@@ -38,33 +41,23 @@ public class PotionOutput : MonoBehaviour, IClickable
     public void CancelClick()
     {
         joint.enabled = false;
-        if (deposit || bin)
+        if (reset)
         {
-            ResetOutput();
+            ResetObj();
+        }
+        else 
+        {
+            transform.position = invPos;
         }
     }
 
-    void ResetOutput()
+    void ResetObj() 
     {
-        if (deposit)
-        {
-            if (InventoryManager.instance.CreateInventoryItem(mix, quality))
-            {
-                deposit = false;
-            }
-        }
-        else if (bin) 
-        {
-            bin = false;
-        }
+        quality = 0;
+        mix.Clear();
+        InventoryManager.instance.AddUnused(this);
 
-        if (!bin && !deposit) 
-        {
-            OutputManager.instance.AddUnused(this);
-            gameObject.SetActive(false);
-        }
     }
-
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -72,29 +65,28 @@ public class PotionOutput : MonoBehaviour, IClickable
         {
             if (collision.gameObject.CompareTag("Bin"))
             {
-                ResetOutput();
+                ResetObj();
             }
             else if (collision.gameObject.CompareTag("Deposit"))
             {
-                ResetOutput();
+                ResetObj();
             }
         }
         else
         {
             if (collision.gameObject.CompareTag("Bin"))
             {
-                bin = true;
+                reset = true;
             }
             else if (collision.gameObject.CompareTag("Deposit"))
-            { 
-                deposit = true;
+            {
+                reset = true;
             }
         }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        deposit = false;
-        bin = false;
+        reset = false;
     }
 }
