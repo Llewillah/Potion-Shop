@@ -26,7 +26,7 @@ public class OutputManager: MonoBehaviour
         {
             PotionOutput p = unused.Dequeue();
             p.SetMix(mix, quality);
-            p.gameObject.transform.position = new Vector2(outputPos.x - dist * unused.Count, outputPos.y);
+            p.gameObject.transform.localPosition = new Vector2(outputPos.x - dist * unused.Count, outputPos.y);
 
             p.gameObject.SetActive(true);
             return true;

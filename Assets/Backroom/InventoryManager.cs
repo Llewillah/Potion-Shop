@@ -7,9 +7,15 @@ public class InventoryManager : MonoBehaviour
     public static InventoryManager instance;
     Queue<InventoryObject> unusedObjs = new Queue<InventoryObject>();
     List<InventoryObject> activeOjbs = new List<InventoryObject>();
+
+    private void Awake()
+    {
+        instance = this;
+    }
+
     public void AddUnused(InventoryObject obj) 
     {
-        if (activeOjbs.Contains(obj)) 
+        if (activeOjbs.Contains(obj))
         {
             activeOjbs.Remove(obj);
         }

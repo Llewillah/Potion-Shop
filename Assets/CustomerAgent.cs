@@ -3,11 +3,17 @@ using System.Collections.Generic;
 
 public class CustomerAgent : MonoBehaviour, IClickable
 {
+    CustomerManager cm;
     public int speed;
     Vector2 startPos;
     Vector2 targetPos;
     public List<int> requestedMix = new List<int>();
 
+    public void SetUp(CustomerManager cm, Vector2 startPos) 
+    {
+        this.cm = cm;
+        this.startPos = startPos;
+    }
     private void Update()
     {
         if (CheckDist())

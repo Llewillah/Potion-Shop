@@ -13,9 +13,9 @@ public class BookScript : MonoBehaviour, IClickable
 
     private void Start()
     {
-        for (int i = 0; i < buttons.Length; i++) 
+        foreach (BookButtons b in buttons) 
         {
-            buttons[i].SetIndex(i,this);
+            b.gameObject.SetActive(false);
         }
 
         foreach(GameObject obj in ingrePrefab) 
@@ -31,11 +31,11 @@ public class BookScript : MonoBehaviour, IClickable
     {
         if (open)
         {
-            transform.position = Vector3.Lerp(transform.position, openPos, speed * Time.deltaTime);
+            transform.localPosition = Vector3.Lerp(transform.localPosition, openPos, speed * Time.deltaTime);
         }
         else 
         {
-            transform.position = Vector3.Lerp(transform.position, closedPos, speed * Time.deltaTime);
+            transform.localPosition = Vector3.Lerp(transform.localPosition, closedPos, speed * Time.deltaTime);
         }
     }
 
@@ -55,7 +55,7 @@ public class BookScript : MonoBehaviour, IClickable
         if (ingredients.Count > 0) 
         {
             Ingredient ingre = ingredients.Dequeue();
-            ingre.gameObject.transform.position = ingreSpawnPos;
+            ingre.gameObject.transform.localPosition = ingreSpawnPos;
             ingre.SetIngredient(IngredientsContainer.instance.ingreScriptables[index + buttons.Length * page]);
         }
     }
@@ -63,5 +63,14 @@ public class BookScript : MonoBehaviour, IClickable
     public void ResetIngredient(Ingredient i)
     {
         ingredients.Enqueue(i);
+    }
+
+    public void StartDay() 
+    {
+        for (int i = 0; i < ImportantInfo.levelsNumIngredients[ImportantInfo.level]; i++)
+        {
+            buttons[i].SetIndex(i, this);
+            buttons[i].gameObject.SetActive(true);
+        }
     }
 }

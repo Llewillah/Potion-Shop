@@ -7,9 +7,10 @@ public class InventoryObject : MonoBehaviour, IClickable
     List<int> mix;
     int quality;
 
+    Rigidbody2D rb;
     TargetJoint2D joint;
     bool reset = false;
-
+    bool deposit = false;
     Vector2 invPos;
 
     private void Start()
@@ -17,6 +18,7 @@ public class InventoryObject : MonoBehaviour, IClickable
         joint = GetComponent<TargetJoint2D>();
         joint.enabled = false;
         InventoryManager.instance.AddUnused(this);
+        rb = GetComponent<Rigidbody2D>();
     }
     private void Update()
     {
@@ -31,11 +33,13 @@ public class InventoryObject : MonoBehaviour, IClickable
         this.mix = mix;
         this.quality = quality;
         invPos = pos;
+        gameObject.SetActive(true);
     }
     public void OnClick()
     {
         joint.enabled = true;
         joint.anchor = transform.InverseTransformPoint(Camera.main.ScreenToWorldPoint(Mouse.current.position.value));
+        rb.bodyType = RigidbodyType2D.Dynamic;
     }
 
     public void CancelClick()
@@ -45,14 +49,19 @@ public class InventoryObject : MonoBehaviour, IClickable
         {
             ResetObj();
         }
-        else 
-        {
-            transform.position = invPos;
-        }
+
+        transform.position = invPos;
+        transform.rotation = Quaternion.identity;
+        rb.bodyType = RigidbodyType2D.Static;
     }
 
     void ResetObj() 
     {
+        if (deposit) 
+        {
+            CustomerManager.instance.StartRecievePotion(mix);
+        }
+
         quality = 0;
         mix.Clear();
         InventoryManager.instance.AddUnused(this);
@@ -69,6 +78,7 @@ public class InventoryObject : MonoBehaviour, IClickable
             }
             else if (collision.gameObject.CompareTag("Deposit"))
             {
+                deposit = true;
                 ResetObj();
             }
         }
@@ -80,6 +90,7 @@ public class InventoryObject : MonoBehaviour, IClickable
             }
             else if (collision.gameObject.CompareTag("Deposit"))
             {
+                deposit = true;
                 reset = true;
             }
         }
@@ -88,5 +99,6 @@ public class InventoryObject : MonoBehaviour, IClickable
     private void OnTriggerExit2D(Collider2D collision)
     {
         reset = false;
+        deposit = false;
     }
 }

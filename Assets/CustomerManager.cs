@@ -6,12 +6,14 @@ using Unity.VisualScripting;
 
 public class CustomerManager : MonoBehaviour
 {
+    public static CustomerManager instance;
+
     public GameObject[] customerObjs;
     public Transform[] customerQueuePoints;
     public Transform[] customerCollectPoints;
     public Vector2 customerStartPoint;
     float timer = 0, customerSpawnRate;
-    int curCustomer, totalCustomers, minRequests, maxRequests;
+    int curCustomer, totalCustomers, minRequests, maxRequests, activeCustomer;
     public float textTimer;
     public float waitDelay;
     public TMP_Text orderText;
@@ -24,12 +26,18 @@ public class CustomerManager : MonoBehaviour
     bool curRequestTyping = false;
     bool curRecieveTyping = false;
     bool day = false;
+
+    private void Awake()
+    {
+        instance = this;
+    }
     private void Start()
     {
         foreach (GameObject obj in customerObjs) 
         {
             unusedAgents.Enqueue(obj.GetComponent<CustomerAgent>());
             obj.SetActive(false);
+            obj.GetComponent<CustomerAgent>().SetUp(this, customerStartPoint);
         }
     }
 
@@ -44,11 +52,17 @@ public class CustomerManager : MonoBehaviour
                 timer = 0;
                 SpawnCustomer();
             }
+
+            if (curCustomer == totalCustomers && activeCustomer == 0) 
+            {
+                EndDay();
+            }
         }
     }
 
     void SpawnCustomer() 
     {
+        activeCustomer++;
         Debug.Log("spawnCustomer");
         int numRequests = Random.Range(minRequests, maxRequests + 1);
         List<int> mix = new List<int>();
@@ -60,6 +74,7 @@ public class CustomerManager : MonoBehaviour
         }
 
         CustomerAgent cur = unusedAgents.Dequeue();
+        cur.gameObject.transform.position = customerStartPoint;
         cur.SetTarget(customerQueuePoints[curActive.Count].position);
         cur.SetMix(mix);
         curActive.Add(cur);
@@ -87,6 +102,7 @@ public class CustomerManager : MonoBehaviour
         customerSpawnRate = ImportantInfo.customerSpawnRate[ImportantInfo.level];
         day = true;
         timer = customerSpawnRate - 2;
+        curCustomer = 0;
     }
     void EndDay() 
     {
@@ -157,10 +173,16 @@ public class CustomerManager : MonoBehaviour
         curRecieveTyping = true;
         CustomerAgent agent = curWaiting[0];
         curWaiting.RemoveAt(0);
-
+        agent.SetTarget(customerStartPoint);
 
         yield return 0;
         curRecieveTyping = false;
+        UpdatePositions();
     }
 
+    public void AddUnused(CustomerAgent a) 
+    {
+        unusedAgents.Enqueue(a);
+        activeCustomer--;
+    }
 }
